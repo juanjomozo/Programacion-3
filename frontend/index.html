@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login y Registro</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="container">
+    <!-- Login Form -->
+    <div class="form-box active" id="login-form">
+        <h2>Iniciar Sesión</h2>
+        <form id="loginForm">
+            <input type="email" name="email" placeholder="Correo electrónico" required>
+            <input type="password" name="password" placeholder="Contraseña" required>
+            <button type="submit">Entrar</button>
+        </form>
+        <div id="loginError" class="message error-message"></div>
+        <p>¿No tienes cuenta? <a href="#" onclick="showForm('register-form')">Regístrate</a></p>
+    </div>
+
+    <!-- Register Form -->
+    <div class="form-box" id="register-form">
+        <h2>Registro</h2>
+        <form id="registerForm">
+            <input type="text" name="name" placeholder="Nombre completo" required>
+            <input type="email" name="email" placeholder="Correo electrónico" required>
+            <input type="password" name="password" placeholder="Contraseña (mínimo 6 caracteres)" required>
+            <select name="role" required>
+                <option value="user">Usuario</option>
+                <option value="admin">Administrador</option>
+            </select>
+            <button type="submit">Registrarse</button>
+        </form>
+        <div id="registerError" class="message error-message"></div>
+        <div id="registerSuccess" class="message success-message"></div>
+        <p>¿Ya tienes cuenta? <a href="#" onclick="showForm('login-form')">Inicia sesión</a></p>
+    </div>
+</div>
+
+<!-- PANEL DE ADMINISTRACIÓN (visible solo para admin) -->
+<div id="admin-panel" style="display: none;">
+    <div class="form-box active">
+        <h2>Panel de Administración</h2>
+        <!-- Mensajes de error/éxito -->
+        <div id="adminMessage" class="message" style="display: none;"></div>
+        <!-- Formulario para crear producto -->
+        <form id="createProductForm">
+            <h3>Crear Producto</h3>
+            <input type="text" name="code" placeholder="Código del producto" required>
+            <input type="text" name="name" placeholder="Nombre" required>
+            <input type="number" name="price" placeholder="Precio" step="0.01" min="0.01" required>
+            <textarea name="description" placeholder="Descripción (opcional)" rows="3"></textarea>
+            <button type="submit">Guardar Producto</button>
+        </form>
+        <hr>
+        <!-- Buscador por código -->
+        <div>
+            <h3>Buscar Producto por Código</h3>
+            <input type="text" id="searchCode" placeholder="Ingrese código">
+            <button id="searchBtn">Buscar</button>
+            <div id="searchResult"></div>
+        </div>
+        <hr>
+        <!-- Listado de todos los productos -->
+        <div>
+            <h3>Todos los Productos</h3>
+            <button id="refreshProducts">Actualizar lista</button>
+            <div id="productList"></div>
+        </div>
+        <!-- Botón para cerrar sesión -->
+        <p><a href="#" id="logoutLink">Cerrar sesión</a></p>
+    </div>
+    </div>
+    <!-- PANEL DE ADMINISTRACIÓN (visible solo para admin) -->
+    <div id="admin-panel" style="display: none;">
+        <div class="form-box active">
+            <h2>Panel de Administración</h2>
+            <!-- Mensajes de error/éxito -->
+            <div id="adminMessage" class="message" style="display: none;"></div>
+            <!-- Formulario para crear producto -->
+            <form id="createProductForm">
+                <h3>Crear Producto</h3>
+                <input type="text" name="code" placeholder="Código del producto" required>
+                <input type="text" name="name" placeholder="Nombre" required>
+                <input type="number" name="price" placeholder="Precio" step="0.01" min="0.01" required>
+                <textarea name="description" placeholder="Descripción (opcional)" rows="3"></textarea>
+                <button type="submit">Guardar Producto</button>
+            </form>
+            <hr>
+            <!-- Buscador por código -->
+            <div>
+                <h3>Buscar Producto por Código</h3>
+                <input type="text" id="searchCode" placeholder="Ingrese código">
+                <button id="searchBtn">Buscar</button>
+                <div id="searchResult"></div>
+            </div>
+            <hr>
+            <!-- Listado de todos los productos -->
+            <div>
+                <h3>Todos los Productos</h3>
+                <button id="refreshProducts">Actualizar lista</button>
+                <div id="productList"></div>
+            </div>
+            <!-- Botón para cerrar sesión -->
+            <p><a href="#" id="logoutLink">Cerrar sesión</a></p>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
