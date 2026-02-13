@@ -15,23 +15,29 @@
             </div>
             <div class="search--box">
                 <i class="fa-solid fa-magnifying-glass"></i>
-                <input type="text" placeholder="Search"/>
+                <input type="text" id="searchInput" placeholder="Buscar producto..."/>
+                <button id="searchButton" style="display: none;">Buscar</button>
             </div>
-            <div class = "menu--icons">
+            <div class="menu--icons">
                 <i class="fa-solid fa-bowl-food"></i>
                 <div class="cart--icon">
                     <i class="fa-solid fa-cart-shopping"></i>
                     <span>0</span>
-
+                </div>
             </div>
         </nav>
     </header> 
+    
+    <!-- Resultados de búsqueda -->
+    <div id="searchResults" class="search-results" style="display: none;"></div>
+    
     <section class="cover">
         <div class="cover--overlay">
-        <h1>A&M</h1>
-        <Span class="sl">tu restaurante virtual de confianza</Span>
+            <h1>A&M</h1>
+            <span class="sl">tu restaurante virtual de confianza</span>
         </div>
     </section>
+    
     <main>
         <h2 class="section-heading">food menu</h2>
         <div class="menu--list">
@@ -39,96 +45,98 @@
                 <img src="hamburguesa.png" alt="food item">
                 <h5>Hamburguesa</h5>
             </div>
-                <div class="menu--item">
+            <div class="menu--item">
                 <img src="camaron.png" alt="food item">
                 <h5>Camaron</h5>
             </div>
-                <div class="menu--item">
+            <div class="menu--item">
                 <img src="ensalada.png" alt="food item">
                 <h5>Ensalada</h5>
-                </div>
-                                <div class="menu--item">
+            </div>
+            <div class="menu--item">
                 <img src="pizza.png" alt="food item">
                 <h5>Pizza</h5>
-                </div>
-                                <div class="menu--item">
+            </div>
+            <div class="menu--item">
                 <img src="panqueca.png" alt="food item">
                 <h5>Panqueca</h5>
-                </div>
-                                <div class="menu--item">
+            </div>
+            <div class="menu--item">
                 <img src="sushi.png" alt="food item">
                 <h5>Sushi</h5>
-                </div>
+            </div>
         </div>  
-            <h2 class="section-heading">menu item</h2>
-            <div class="card--list">
-                <div class="card">
+        
+        <h2 class="section-heading">menu item</h2>
+        <div class="card--list">
+            <div class="card" data-product-name="Combo 1" data-product-price="12.00">
                 <img src="combo1.png" alt="combo item">
                 <h4 class="card--title">Combo 1</h4>
                 <div class="card--price">
-                <div class="price">$12.00</div>
-                <i class="fa-solid fa-plus add-to-cart"></i>
+                    <div class="price">$12.00</div>
+                    <i class="fa-solid fa-plus add-to-cart"></i>
+                </div>
             </div>
-        </div>
-                        <div class="card">
+            <div class="card" data-product-name="Combo 2" data-product-price="12.00">
                 <img src="combo2.png" alt="combo item">
                 <h4 class="card--title">Combo 2</h4>
                 <div class="card--price">
-                <div class="price">$12.00</div>
-                <i class="fa-solid fa-plus add-to-cart"></i>
+                    <div class="price">$12.00</div>
+                    <i class="fa-solid fa-plus add-to-cart"></i>
+                </div>
             </div>
-        </div>
-                        <div class="card">
+            <div class="card" data-product-name="Combo 3" data-product-price="12.00">
                 <img src="combo3.png" alt="combo item">
                 <h4 class="card--title">Combo 3</h4>
                 <div class="card--price">
-                <div class="price">$12.00</div>
-                <i class="fa-solid fa-plus add-to-cart"></i>
+                    <div class="price">$12.00</div>
+                    <i class="fa-solid fa-plus add-to-cart"></i>
+                </div>
             </div>
-        </div>
-                        <div class="card">
+            <div class="card" data-product-name="Combo 4" data-product-price="12.00">
                 <img src="combo4.png" alt="combo item">
                 <h4 class="card--title">Combo 4</h4>
                 <div class="card--price">
-                <div class="price">$12.00</div>
-                <i class="fa-solid fa-plus add-to-cart"></i>
+                    <div class="price">$12.00</div>
+                    <i class="fa-solid fa-plus add-to-cart"></i>
+                </div>
             </div>
-        </div>
-                        <div class="card">
+            <div class="card" data-product-name="Hot Dog" data-product-price="12.00">
                 <img src="hotdog.png" alt="combo item">
                 <h4 class="card--title">Hot Dog</h4>
                 <div class="card--price">
-                <div class="price">$12.00</div>
-                <i class="fa-solid fa-plus add-to-cart"></i>
+                    <div class="price">$12.00</div>
+                    <i class="fa-solid fa-plus add-to-cart"></i>
+                </div>
             </div>
-        </div>
-                        <div class="card">
+            <div class="card" data-product-name="Torta" data-product-price="12.00">
                 <img src="torta.png" alt="combo item">
                 <h4 class="card--title">Torta</h4>
                 <div class="card--price">
-                <div class="price">$12.00</div>
-                <i class="fa-solid fa-plus add-to-cart"></i>
+                    <div class="price">$12.00</div>
+                    <i class="fa-solid fa-plus add-to-cart"></i>
+                </div>
             </div>
         </div>
-    </div>
-    <div class="sidebar" id="sidebar">
-        <div class="sidebar-close">
-            <i class="fa-solid fa-close"></i>
-        </div>
+        
+        <div class="sidebar" id="sidebar">
+            <div class="sidebar-close">
+                <i class="fa-solid fa-close"></i>
+            </div>
             <div class="cart--menu">
                 <h3>my cart</h3>
                 <div class="cart--terms"></div>
             </div>
             <div class="sidebar--footer">
                 <div class="total--amount">
-                <h5>total</h5>
-                <div class="cart--total">0.00</div>
-            </div>
-            <button class="checkout-btn">checkout</button>
+                    <h5>total</h5>
+                    <div class="cart--total">0.00</div>
+                </div>
+                <button class="checkout-btn">checkout</button>
             </div>
         </div>
-    </div>
     </main>
+    
     <script src="main.js"></script>
 </body>
 </html>
