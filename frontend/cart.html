@@ -1,0 +1,135 @@
+x<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A&M - Restaurante Virtual</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+</head>
+<body>
+    <header class="header">
+        <nav class="header--menu">
+            <div class="burger--icon">
+                <i class="fa-solid fa-bars"></i>
+            </div>
+            <div class="search--box">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" placeholder="Search"/>
+            </div>
+            <div class = "menu--icons">
+                <i class="fa-solid fa-bowl-food"></i>
+                <div class="cart--icon">
+                    <i class="fa-solid fa-cart-shopping"></i>
+                    <span>0</span>
+
+            </div>
+        </nav>
+    </header> 
+    <section class="cover">
+        <div class="cover--overlay">
+        <h1>A&M</h1>
+        <Span class="sl">tu restaurante virtual de confianza</Span>
+        </div>
+    </section>
+    <main>
+        <h2 class="section-heading">food menu</h2>
+        <div class="menu--list">
+            <div class="menu--item">
+                <img src="../Carpeta Comida Mozo/taco.png" alt="food item">
+                <h5>Hamburguesa</h5>
+            </div>
+                <div class="menu--item">
+                <img src="../Carpeta Comida Mozo/camaron.png" alt="food item">
+                <h5>Hamburguesa</h5>
+            </div>
+                <div class="menu--item">
+                <img src="../Carpeta Comida Mozo/ensalada.png" alt="food item">
+                <h5>Ensalada</h5>
+                </div>
+                                <div class="menu--item">
+                <img src="../Carpeta Comida Mozo/pizza.png" alt="food item">
+                <h5>Pizza</h5>
+                </div>
+                                <div class="menu--item">
+                <img src="../Carpeta Comida Mozo/panqueca.png" alt="food item">
+                <h5>Panqueca</h5>
+                </div>
+                                <div class="menu--item">
+                <img src="../Carpeta Comida Mozo/sushi.png" alt="food item">
+                <h5>Sushi</h5>
+                </div>
+        </div>  
+            <h2 class="section-heading">menu item</h2>
+            <div class="card--list">
+                <div class="card">
+                <img src="../Carpeta Comida Mozo/combo1.png" alt="combo item">
+                <h4 class="card--title">Combo 1</h4>
+                <div class="card--price">
+                <div class="price">$12.00</div>
+                <i class="fa-solid fa-plus add-to-cart"></i>
+            </div>
+        </div>
+                        <div class="card">
+                <img src="../Carpeta Comida Mozo/combo2.png" alt="combo item">
+                <h4 class="card--title">Combo 2</h4>
+                <div class="card--price">
+                <div class="price">$12.00</div>
+                <i class="fa-solid fa-plus add-to-cart"></i>
+            </div>
+        </div>
+                        <div class="card">
+                <img src="../Carpeta Comida Mozo/combo3.png" alt="combo item">
+                <h4 class="card--title">Combo 3</h4>
+                <div class="card--price">
+                <div class="price">$12.00</div>
+                <i class="fa-solid fa-plus add-to-cart"></i>
+            </div>
+        </div>
+                        <div class="card">
+                <img src="../Carpeta Comida Mozo/combo4.png" alt="combo item">
+                <h4 class="card--title">Combo 4</h4>
+                <div class="card--price">
+                <div class="price">$12.00</div>
+                <i class="fa-solid fa-plus add-to-cart"></i>
+            </div>
+        </div>
+                        <div class="card">
+                <img src="../Carpeta Comida Mozo/hotdog.png" alt="combo item">
+                <h4 class="card--title">Hot Dog</h4>
+                <div class="card--price">
+                <div class="price">$12.00</div>
+                <i class="fa-solid fa-plus add-to-cart"></i>
+            </div>
+        </div>
+                        <div class="card">
+                <img src="../Carpeta Comida Mozo/torta.png" alt="combo item">
+                <h4 class="card--title">Torta</h4>
+                <div class="card--price">
+                <div class="price">$12.00</div>
+                <i class="fa-solid fa-plus add-to-cart"></i>
+            </div>
+        </div>
+    </div>
+        /* aca termina el menu de combos y empieza el carrito de compras donde el usuario podra ver los productos que ha agregado al carro y el total a pagar */
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-close">
+            <i class="fa-solid fa-close"></i>
+        </div>
+            <div class="cart--menu">
+                <h3>my cart</h3>
+                <div class="cart--terms"></div>
+            </div>
+            <div class="sidebar--footer">
+                <div class="total--amount">
+                <h5>total</h5>
+                <div class="cart--total">0.00</div>
+            </div>
+            <button class="checkout-btn">checkout</button>
+            </div>
+        </div>
+    </div>
+    </main>
+    <script src="main.js"></script>
+</body>
+</html>
