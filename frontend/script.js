@@ -1,9 +1,17 @@
+// Configuración de API URL - Detecta automáticamente si estás en local o en producción
+const API_URL = window.location.hostname === 'localhost' 
+    ? 'http://localhost:3000' 
+    : window.location.origin; // Usa la URL actual en producción
+
+console.log('🌐 API URL:', API_URL); // Para debug
+
 // Alternar formularios
 function showForm(formId) {
     document.querySelectorAll('.form-box').forEach(form => form.classList.remove('active'));
     const target = document.getElementById(formId);
     if (target) target.classList.add('active');
 }
+
 // Verificar sesión activa al cargar la página
 const token = localStorage.getItem('token');
 const user = JSON.parse(localStorage.getItem('user') || 'null');
@@ -37,7 +45,7 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
     errorDiv.innerText = '';
 
     try {
-        const response = await fetch('http://localhost:3000/api/login', {
+        const response = await fetch(`${API_URL}/api/login`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email, password })
@@ -49,21 +57,21 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
             throw new Error(data.error || 'Error en el login');
         }
 
-  // Guardar token y usuario
-localStorage.setItem('token', data.token);
-localStorage.setItem('user', JSON.stringify(data.user));
+        // Guardar token y usuario
+        localStorage.setItem('token', data.token);
+        localStorage.setItem('user', JSON.stringify(data.user));
 
-alert(`Bienvenido ${data.user.name}.`);
+        alert(`Bienvenido ${data.user.name}.`);
 
-// Ocultar formularios de login/registro y mostrar panel según rol
-document.querySelector('.container').style.display = 'none';
-if (data.user.role === 'admin') {
-    document.getElementById('admin-panel').style.display = 'block';
-    cargarProductos(); // Carga inicial de productos
-} else {
-    // Redirigir a cart.html si es usuario normal
-    window.location.href = 'cart.html';
-}
+        // Ocultar formularios de login/registro y mostrar panel según rol
+        document.querySelector('.container').style.display = 'none';
+        if (data.user.role === 'admin') {
+            document.getElementById('admin-panel').style.display = 'block';
+            cargarProductos(); // Carga inicial de productos
+        } else {
+            // Redirigir a cart.html si es usuario normal
+            window.location.href = '/cart';
+        }
 
     } catch (error) {
         errorDiv.innerText = error.message;
@@ -89,7 +97,7 @@ document.getElementById('registerForm').addEventListener('submit', async (e) => 
     successDiv.innerText = '';
 
     try {
-        const response = await fetch('http://localhost:3000/api/register', {
+        const response = await fetch(`${API_URL}/api/register`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ name, email, password, role })
@@ -156,7 +164,7 @@ document.getElementById('createProductForm').addEventListener('submit', async (e
     }
 
     try {
-        const response = await fetchWithAuth('http://localhost:3000/api/products', {
+        const response = await fetchWithAuth(`${API_URL}/api/products`, {
             method: 'POST',
             body: JSON.stringify({ code, name, price, description })
         });
@@ -175,7 +183,7 @@ document.getElementById('createProductForm').addEventListener('submit', async (e
 // Cargar y mostrar todos los productos
 async function cargarProductos() {
     try {
-        const response = await fetchWithAuth('http://localhost:3000/api/products');
+        const response = await fetchWithAuth(`${API_URL}/api/products`);
         const products = await response.json();
         if (!response.ok) throw new Error(products.error || 'Error al cargar productos');
 
@@ -211,7 +219,7 @@ document.getElementById('searchBtn').addEventListener('click', async () => {
     }
 
     try {
-        const response = await fetchWithAuth(`http://localhost:3000/api/products/search?code=${encodeURIComponent(code)}`);
+        const response = await fetchWithAuth(`${API_URL}/api/products/search?code=${encodeURIComponent(code)}`);
         const product = await response.json();
 
         if (!response.ok) throw new Error(product.error || 'Producto no encontrado');
