@@ -2,16 +2,24 @@ const express = require('express');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const cors = require('cors');
-const db = require('./database');
+const { pool, initDB } = require('./database');
+require('dotenv').config();
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
-const SECRET_KEY = 'mi_clave_secreta_super_segura'; // En producción usar variable de entorno
+// Usar variable de entorno para SECRET_KEY
+const SECRET_KEY = process.env.SECRET_KEY || 'mi_clave_secreta_super_segura';
+
+// Inicializar base de datos al arrancar
+initDB().catch(err => {
+    console.error('No se pudo inicializar la base de datos:', err);
+    process.exit(1);
+});
 
 // -------------------- REGISTER --------------------
-app.post('/api/register', (req, res) => {
+app.post('/api/register', async (req, res) => {
     const { name, email, password, role } = req.body;
 
     // Validaciones básicas
@@ -32,35 +40,37 @@ app.post('/api/register', (req, res) => {
         return res.status(400).json({ error: 'Rol no válido' });
     }
 
-    // Encriptar contraseña
-    const hashedPassword = bcrypt.hashSync(password, 10);
+    try {
+        // Encriptar contraseña
+        const hashedPassword = bcrypt.hashSync(password, 10);
 
-    // Insertar en DB
-    db.run(
-        'INSERT INTO users (name, email, password, role) VALUES (?, ?, ?, ?)',
-        [name, email, hashedPassword, role],
-        function (err) {
-            if (err) {
-                if (err.message.includes('UNIQUE constraint failed')) {
-                    return res.status(400).json({ error: 'El email ya está registrado' });
-                }
-                return res.status(500).json({ error: 'Error en el servidor' });
-            }
-            res.status(201).json({ message: 'Registro exitoso' });
+        // Insertar en DB
+        await pool.query(
+            'INSERT INTO users (name, email, password, role) VALUES ($1, $2, $3, $4)',
+            [name, email, hashedPassword, role]
+        );
+
+        res.status(201).json({ message: 'Registro exitoso' });
+    } catch (err) {
+        if (err.code === '23505') { // Código de error de PostgreSQL para UNIQUE constraint
+            return res.status(400).json({ error: 'El email ya está registrado' });
         }
-    );
+        console.error('Error en registro:', err);
+        return res.status(500).json({ error: 'Error en el servidor' });
+    }
 });
 
 // -------------------- LOGIN --------------------
-app.post('/api/login', (req, res) => {
+app.post('/api/login', async (req, res) => {
     const { email, password } = req.body;
 
     if (!email || !password) {
         return res.status(400).json({ error: 'Email y contraseña requeridos' });
     }
 
-    db.get('SELECT * FROM users WHERE email = ?', [email], (err, user) => {
-        if (err) return res.status(500).json({ error: 'Error en el servidor' });
+    try {
+        const result = await pool.query('SELECT * FROM users WHERE email = $1', [email]);
+        const user = result.rows[0];
 
         if (!user) {
             return res.status(401).json({ error: 'Credenciales inválidas' });
@@ -71,7 +81,7 @@ app.post('/api/login', (req, res) => {
             return res.status(401).json({ error: 'Credenciales inválidas' });
         }
 
-        // Generar token simple (JWT)
+        // Generar token JWT
         const token = jwt.sign(
             { id: user.id, email: user.email, role: user.role },
             SECRET_KEY,
@@ -83,11 +93,11 @@ app.post('/api/login', (req, res) => {
             token,
             user: { id: user.id, name: user.name, email: user.email, role: user.role }
         });
-    });
+    } catch (err) {
+        console.error('Error en login:', err);
+        return res.status(500).json({ error: 'Error en el servidor' });
+    }
 });
-
-const PORT = 3000;
-app.listen(PORT, () => console.log(`Servidor en http://localhost:${PORT}`));
 
 // Middleware: verificar token y rol admin
 const verifyAdmin = (req, res, next) => {
@@ -102,7 +112,7 @@ const verifyAdmin = (req, res, next) => {
         if (decoded.role !== 'admin') {
             return res.status(403).json({ error: 'Acceso denegado: se requiere rol admin' });
         }
-        req.user = decoded; // guardamos datos del usuario
+        req.user = decoded;
         next();
     } catch (err) {
         return res.status(401).json({ error: 'Token inválido o expirado' });
@@ -114,7 +124,7 @@ const verifyAdmin = (req, res, next) => {
 // ------------------------------------------------------------
 
 // Crear producto
-app.post('/api/products', verifyAdmin, (req, res) => {
+app.post('/api/products', verifyAdmin, async (req, res) => {
     const { code, name, price, description } = req.body;
 
     // Validaciones
@@ -126,52 +136,71 @@ app.post('/api/products', verifyAdmin, (req, res) => {
         return res.status(400).json({ error: 'El precio debe ser un número positivo' });
     }
 
-    // Insertar producto
-    db.run(
-        `INSERT INTO products (code, name, price, description, created_by) VALUES (?, ?, ?, ?, ?)`,
-        [code, name, Number(price), description || null, req.user.id],
-        function (err) {
-            if (err) {
-                if (err.message.includes('UNIQUE constraint failed')) {
-                    return res.status(400).json({ error: 'Ya existe un producto con ese código' });
-                }
-                console.error(err);
-                return res.status(500).json({ error: 'Error al guardar el producto' });
-            }
-            res.status(201).json({ 
-                message: 'Producto creado exitosamente',
-                product: { id: this.lastID, code, name, price, description }
-            });
+    try {
+        const result = await pool.query(
+            `INSERT INTO products (code, name, price, description, created_by) 
+             VALUES ($1, $2, $3, $4, $5) 
+             RETURNING *`,
+            [code, name, Number(price), description || null, req.user.id]
+        );
+
+        res.status(201).json({ 
+            message: 'Producto creado exitosamente',
+            product: result.rows[0]
+        });
+    } catch (err) {
+        if (err.code === '23505') { // UNIQUE constraint
+            return res.status(400).json({ error: 'Ya existe un producto con ese código' });
         }
-    );
+        console.error('Error al crear producto:', err);
+        return res.status(500).json({ error: 'Error al guardar el producto' });
+    }
 });
 
 // Listar todos los productos
-app.get('/api/products', verifyAdmin, (req, res) => {
-    db.all(`SELECT * FROM products ORDER BY id DESC`, [], (err, rows) => {
-        if (err) {
-            console.error(err);
-            return res.status(500).json({ error: 'Error al obtener productos' });
-        }
-        res.json(rows);
-    });
+app.get('/api/products', verifyAdmin, async (req, res) => {
+    try {
+        const result = await pool.query('SELECT * FROM products ORDER BY id DESC');
+        res.json(result.rows);
+    } catch (err) {
+        console.error('Error al obtener productos:', err);
+        return res.status(500).json({ error: 'Error al obtener productos' });
+    }
 });
 
-// Buscar producto por código (búsqueda exacta o parcial)
-app.get('/api/products/search', verifyAdmin, (req, res) => {
+// Buscar producto por código
+app.get('/api/products/search', verifyAdmin, async (req, res) => {
     const { code } = req.query;
     if (!code) {
         return res.status(400).json({ error: 'Debe proporcionar un código para buscar' });
     }
 
-    db.get(`SELECT * FROM products WHERE code LIKE ?`, [`%${code}%`], (err, product) => {
-        if (err) {
-            console.error(err);
-            return res.status(500).json({ error: 'Error en la búsqueda' });
-        }
-        if (!product) {
+    try {
+        const result = await pool.query(
+            'SELECT * FROM products WHERE code ILIKE $1',
+            [`%${code}%`]
+        );
+
+        if (result.rows.length === 0) {
             return res.status(404).json({ error: 'Producto no encontrado' });
         }
-        res.json(product);
-    });
+
+        res.json(result.rows[0]);
+    } catch (err) {
+        console.error('Error en la búsqueda:', err);
+        return res.status(500).json({ error: 'Error en la búsqueda' });
+    }
+});
+
+// Puerto desde variable de entorno o 3000 por defecto
+const PORT = process.env.PORT || 3000;
+
+app.listen(PORT, '0.0.0.0', () => {
+    console.log(`🚀 Servidor corriendo en puerto ${PORT}`);
+    console.log(`📊 Base de datos: PostgreSQL`);
+});
+
+// Manejo de errores de pool
+pool.on('error', (err) => {
+    console.error('Error inesperado en el pool de PostgreSQL:', err);
 });
