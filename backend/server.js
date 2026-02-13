@@ -2,12 +2,16 @@ const express = require('express');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const cors = require('cors');
+const path = require('path');
 const { pool, initDB } = require('./database');
 require('dotenv').config();
 
 const app = express();
 app.use(cors());
 app.use(express.json());
+
+// Servir archivos estáticos desde la carpeta frontend
+app.use(express.static(path.join(__dirname, '../frontend')));
 
 // Usar variable de entorno para SECRET_KEY
 const SECRET_KEY = process.env.SECRET_KEY || 'mi_clave_secreta_super_segura';
@@ -192,12 +196,23 @@ app.get('/api/products/search', verifyAdmin, async (req, res) => {
     }
 });
 
+// Ruta para la raíz - redirige a Login-Register.html
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, '../frontend/Login-Register.html'));
+});
+
+// Ruta para cart.html
+app.get('/cart', (req, res) => {
+    res.sendFile(path.join(__dirname, '../frontend/cart.html'));
+});
+
 // Puerto desde variable de entorno o 3000 por defecto
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, '0.0.0.0', () => {
     console.log(`🚀 Servidor corriendo en puerto ${PORT}`);
     console.log(`📊 Base de datos: PostgreSQL`);
+    console.log(`🌐 Frontend disponible en: http://localhost:${PORT}`);
 });
 
 // Manejo de errores de pool
